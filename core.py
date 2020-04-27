@@ -21,7 +21,7 @@ running = True
 def writeBackConfig():
     config["server"]["fqhost"] = "http://{0}:{1}/".format(config.get("server","host"), config.get("server", "port"))
     with open(configFileName, 'w') as configFile:
-        config.write(configFile) 
+        config.write(configFile)
 
 def writeBackWebhooks():
     with open(webhookFileName, 'w') as webhookFile:
@@ -92,9 +92,9 @@ async def webhookHandler(request):
             if json["id"] in webhooks:
                 raise web.HTTPRequestTimeout
             else:
-                raise web.HTTPUnauthorized         
+                raise web.HTTPUnauthorized
     except:
-        raise web.HTTPBadRequest    
+        raise web.HTTPBadRequest
     raise web.HTTPOk
 
 
@@ -115,7 +115,7 @@ else:
     print("No config found")
     config["discord"] = {"token":"", "owner":""}
     config["server"] = {"host":"localhost", "port":6280}
-
+    writeBackConfig()
 
 # Configure from command line if needed
 if len(sys.argv) > 1:
@@ -199,7 +199,7 @@ async def on_message(message):
 
 
     # Localize listening to a given channel
-    if message.content.startswith("|Localize"):
+    if message.content.lower().startswith("|localize"):
         if int(config.get("discord", "owner")) == message.author.id:
             config["discord"]["channel"] = str(message.channel.id)
             writeBackConfig()
@@ -212,16 +212,16 @@ async def on_message(message):
         return
 
     # Allow the bot to be claimed from discord
-    if message.content == "|Claim":
+    if message.content.lower() == "|claim":
         if config.get("discord","owner") == "":
             config["discord"]["owner"] = str(message.author.id)
             writeBackConfig()
             await message.channel.send("Ownership claimed.")
         else:
             await message.channel.send("Ownership already claimed.")
-    
+
     # Transfer ownership to another user
-    if message.content.startswith("|Transfer"):
+    if message.content.lower().startswith("|transfer"):
         if int(config.get("discord", "owner")) == message.author.id:
             config["discord"]["owner"] = message.content.split()[1]
             writeBackConfig()
@@ -230,7 +230,7 @@ async def on_message(message):
             await message.channel.send("Ownership can only be transfered by the owner.")
 
     # Register a new webhook pair
-    if message.content == "|Register":
+    if message.content.lower() == "|register":
         if message.author.id in webhooks:
             await message.channel.send("Reregistering, details sent directly.")
         else:
@@ -244,7 +244,7 @@ async def on_message(message):
             pass
 
     # Check an existing new webhook pair
-    if message.content == "|Status":
+    if message.content.lower() == "|status":
         if message.author.id in webhooks:
             await message.channel.send("Registered, details sent directly.")
             try:
@@ -256,9 +256,9 @@ async def on_message(message):
                 pass
         else:
             await message.channel.send("Unregistered.")
-    
+
     # Fire a webhook chain
-    if message.content == "|Initiate":
+    if message.content.lower() == "|initiate":
         if message.author.id in webhooks:
             token = secrets.token_hex(8)
             await message.channel.send("Initiating chain with payload: `{0}`".format(token))
@@ -272,7 +272,7 @@ async def on_message(message):
 
 
     # Ping test
-    if message.content == "|Ping":
+    if message.content.lower() == "|ping":
         await message.channel.send("> Online and Active")
 
 
