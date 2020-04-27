@@ -130,7 +130,7 @@ if len(sys.argv) > 1:
             owner = True
         elif arg == "-H":
             host = True
-        elif arg == "-P:
+        elif arg == "-P":
             port = True
         elif token:
             config["discord"]["token"] = arg
