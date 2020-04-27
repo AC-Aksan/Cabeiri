@@ -15,9 +15,11 @@ import collections
 
 configFileName = "cabeiri.config.ini"
 webhookFileName = "cabeiri.webhooks.pdb"
+running = True
 
 # Helper Functions
 def writeBackConfig():
+    config["server"]["fqhost"] = "http://{0}:{1}/".format(config.get("server","host"), config.get("server", "port"))
     with open(configFileName, 'w') as configFile:
         config.write(configFile) 
 
@@ -34,14 +36,14 @@ def startServer(runner):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.run_until_complete(runner.setup())
-    site = web.TCPSite(runner, "localhost", 6280)
+    site = web.TCPSite(runner, config.get("server","host"), config.get("server", "port"))
     loop.run_until_complete(site.start())
     loop.run_forever()
 
 
 # Asynchronous Functions
 async def cleanUp():
-    while True:
+    while running:
         timedOut = []
         currentTime = time.monotonic()
         for registrant in registrants:
@@ -112,7 +114,7 @@ if os.path.isfile(configFileName):
 else:
     print("No config found")
     config["discord"] = {"token":"", "owner":""}
-    config["server"] = {"fqhost":"http://localhost:6280/"}
+    config["server"] = {"host":"localhost", "port":6280}
 
 
 # Configure from command line if needed
@@ -120,6 +122,7 @@ if len(sys.argv) > 1:
     token = False
     owner = False
     host = False
+    port = False
     for arg in sys.argv[1:]:
         if arg == "-T":
             token = True
@@ -127,6 +130,8 @@ if len(sys.argv) > 1:
             owner = True
         elif arg == "-H":
             host = True
+        elif arg == "-P:
+            port = True
         elif token:
             config["discord"]["token"] = arg
             token = False
@@ -136,9 +141,13 @@ if len(sys.argv) > 1:
             owner = False
             print("Owner set")
         elif host:
-            config["server"]["fqhost"] = arg
-            owner = False
+            config["server"]["host"] = arg
+            host = False
             print("Host set")
+        elif port:
+            config["server"]["port"] = arg
+            host = False
+            print("Port set")
         else:
             print ("Bad arguments, ending")
             exit(1)
