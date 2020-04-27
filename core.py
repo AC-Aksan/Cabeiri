@@ -7,6 +7,7 @@ import os
 import time
 import threading
 import secrets
+import hashlib
 import asyncio
 import aiohttp
 from aiohttp import web
@@ -30,7 +31,7 @@ def writeBackWebhooks():
         webhookFile.close()
 
 def createWebhook(author, webhook):
-    return "default"
+    return hashlib.md5(bytes(str(author) + webhook, "utf-8")).hexdigest()
 
 def startServer(runner):
     loop = asyncio.new_event_loop()
