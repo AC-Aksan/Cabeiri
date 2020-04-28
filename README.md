@@ -3,27 +3,34 @@ A web socket to discord interface for Rube-Goldberg chains.
 
 ## Config Arguments
 - `-T`
-  Used to provide the discord bot token to be used
+  Used to provide the discord bot token to be used.
+  
 - `-O`
   Used to provide the user ID of the owner, alternative to using the `|claim` command.
+  
 - `-H`
   Used to specify the unqualified host name, defaults to `localhost`. 
+  
 - `-P`
   Used to specify the port to operate on, defaults to `6280`.
 
 ## Config Commands
 - `|claim`
   Used to claim ownership of an unclaimed instance of the bot. 
+  
 - `|localize`
   Used to set the channel that the bot answers commands in, can be used in any channel and only by the owner.
+  
 - `|ping`
   Used to get a response from the bot to confirm life.
   
 ## Basic Commands
 - `|register`
   Used to register a new webhook pair, completes in DMs.
+  
 - `|status`
   Used to check the details of an existing webhook pair, completes in DMs.
+  
 - `|initiate`
   Used to fire the initial outgoing webhook and begin listening on the incoming webhook, mentions the initiator on completion, in channel if localized or DMs otherwise. 
   
@@ -37,8 +44,11 @@ Example request body:
   "payload": "abcdefghijklmnop"
 }
 ```
--`id` Required, unique to user, must be accurate.
--`payload` Required, unique to activation, can be innacurate.
+-`id` 
+  Required, unique to user, must be accurate.
+  
+-`payload` 
+  Required, unique to activation, can be innacurate.
   
 
 # Competition Premise
