@@ -1,5 +1,5 @@
 # Cabeiri
-A web socket to discord interface for Rube-Goldberg chains, used but 
+A web socket to discord interface for Rube-Goldberg chains.
 
 ## Config Arguments
 - `-T`
