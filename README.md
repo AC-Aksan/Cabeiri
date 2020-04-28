@@ -29,7 +29,7 @@ A web socket to discord interface for Rube-Goldberg chains.
 # Competition Premise
   The competition is open to all [HackSocNottingham](https://github.com/HackSocNotts) members and revolves around making the most complicated, convoluted, unreliable and over-engineered methods of plugging one piece of tech into another, beginning and ending with this bot. 
   Prizes are to be awarded for the longest chains, the most protocols used in a chain and the best individual protocol used in a chain and will be awarded after the close of the competition.
-  The competition wil run from 19:00 28/04/2020 to 19:00 05/05/2020 and entries will be expected to provide evidence of their Rube-Goldberg-Chain whether in the form of source code, that can then be posted after the competition concludes, or appropriate evidence of the more unique stages of the chain. 
+  The competition will run from 19:00 28/04/2020 to 19:00 05/05/2020 and entries will be expected to provide evidence of their Rube-Goldberg-Chain whether in the form of source code, that can then be posted after the competition concludes, or appropriate evidence of the more unique stages of the chain. 
 
 # Useful Tools
 - [Webhook.site](https://webhook.site/)
