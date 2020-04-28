@@ -18,6 +18,7 @@ A web socket to discord interface for Rube-Goldberg chains.
   Used to set the channel that the bot answers commands in, can be used in any channel and only by the owner.
 - `|ping`
   Used to get a response from the bot to confirm life.
+  
 ## Basic Commands
 - `|register`
   Used to register a new webhook pair, completes in DMs.
@@ -25,6 +26,20 @@ A web socket to discord interface for Rube-Goldberg chains.
   Used to check the details of an existing webhook pair, completes in DMs.
 - `|initiate`
   Used to fire the initial outgoing webhook and begin listening on the incoming webhook, mentions the initiator on completion, in channel if localized or DMs otherwise. 
+  
+# Webhook Request Format
+  The expected format of the final HTTP request matches the first in consisting of a JSON body with the following keys, `id` unique to the user and consistent between activations and `payload` unique to the activation. A message without the correct `id` for the URL that is being used will be rejected but the `payload` does not need to be correct to the activation. Overall the outgoing message serves as an example for the ingoing message.
+
+Example request body:
+```
+{
+  "id": 123456789123456789,
+  "payload": "abcdefghijklmnop"
+}
+```
+-`id` Required, unique to user, must be accurate.
+-`payload` Required, unique to activation, can be innacurate.
+  
 
 # Competition Premise
   The competition is open to all [HackSocNottingham](https://github.com/HackSocNotts) members and revolves around making the most complicated, convoluted, unreliable and over-engineered methods of plugging one piece of tech into another, beginning and ending with this bot. 
