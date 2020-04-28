@@ -51,12 +51,22 @@ async def cleanUp():
             if (currentTime - registrants[registrant]) > 300:
                 timedOut.append(registrant)
         for registrant in timedOut:
-            del registrants[registrant]
+            try:
+                del registrants[registrant]
+            except:
+                pass
+            finally:
+                pass
         for initiation in initiations:
             if (currentTime - initiations[initiation]) > 10800:
                 timedOut.append(initiation)
         for initiation in timedOut:
-            del initiations[initiation]
+            try:
+                del initiations[initiation]
+            except:
+                pass
+            finally:
+                pass
         while len(completions) > 0:
             id, payload = completions.popleft()
             if config.get("discord", "channel", fallback="") != "":
