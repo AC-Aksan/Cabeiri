@@ -50,6 +50,13 @@ Example request body:
 -`payload` 
   Required, unique to activation, can be innacurate.
   
+The following header will additionally be expected to specify that the body uses JSON encoding:
+```
+{
+  'Content-Type': 'application/json'
+}
+```
+  
 
 # Competition Premise
   The competition is open to all [HackSocNottingham](https://github.com/HackSocNotts) members and revolves around making the most complicated, convoluted, unreliable and over-engineered methods of plugging one piece of tech into another, beginning and ending with this bot. 
