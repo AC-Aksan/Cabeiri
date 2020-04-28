@@ -174,7 +174,7 @@ client = discord.Client()
 
 # Set up webhook server
 app = web.Application()
-app.add_routes([web.post('/cabieri/{encode}', webhookHandler)])
+app.add_routes([web.post('/cabeiri/{encode}', webhookHandler)])
 runner = web.AppRunner(app)
 
 
@@ -191,7 +191,7 @@ async def on_message(message):
     if message.channel.type == discord.ChannelType.private:
         if message.author.id in registrants:
             webhooks[message.author.id] = (message.content, createWebhook(message.author.id, message.content))
-            await message.author.send("Incoming URL: `{0}cabieri/{1}`".format(config.get("server","fqhost"),webhooks[message.author.id][1]))
+            await message.author.send("Incoming URL: `{0}cabeiri/{1}`".format(config.get("server","fqhost"),webhooks[message.author.id][1]))
             writeBackWebhooks()
         elif message.author != client.user:
             await message.author.send("No active registration exists, you were potentially timed out.")
@@ -250,7 +250,7 @@ async def on_message(message):
             await message.channel.send("Registered, details sent directly.")
             try:
                 await message.author.send("Outgoing URL: `{0}`".format(webhooks[message.author.id][0]))
-                await message.author.send("Incoming URL: `{0}cabieri/{1}`".format(config.get("server","fqhost"),webhooks[message.author.id][1]))
+                await message.author.send("Incoming URL: `{0}cabeiri/{1}`".format(config.get("server","fqhost"),webhooks[message.author.id][1]))
             except discord.errors.Forbidden:
                 await message.channel.send("Direct messaging forbidden, please adjust and try again.")
             finally:
