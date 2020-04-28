@@ -35,7 +35,7 @@ A web socket to discord interface for Rube-Goldberg chains.
   Used to fire the initial outgoing webhook and begin listening on the incoming webhook, mentions the initiator on completion, in channel if localized or DMs otherwise. 
   
 # Webhook Request Format
-  The expected format of the final HTTP request matches the first in consisting of a JSON body with the following keys, `id` unique to the user and consistent between activations and `payload` unique to the activation. A message without the correct `id` for the URL that is being used will be rejected but the `payload` does not need to be correct to the activation. Overall the outgoing message serves as an example for the ingoing message.
+  The expected format of the final HTTP POST request matches the first in consisting of a JSON body with the following keys, `id` unique to the user and consistent between activations and `payload` unique to the activation. A message without the correct `id` for the URL that is being used will be rejected but the `payload` does not need to be correct to the activation. Overall the outgoing message serves as an example for the ingoing message.
 
 Example request body:
 ```
