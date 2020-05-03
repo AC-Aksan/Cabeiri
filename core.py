@@ -16,6 +16,7 @@ import collections
 
 configFileName = "cabeiri.config.ini"
 webhookFileName = "cabeiri.webhooks.pdb"
+chainMessage = "HackSocNotts"
 running = True
 
 # Helper Functions
@@ -44,6 +45,7 @@ def startServer(runner):
 
 # Asynchronous Functions
 async def cleanUp():
+    global chainSeg
     while running:
         timedOut = []
         currentTime = time.monotonic()
@@ -73,10 +75,30 @@ async def cleanUp():
                 await client.get_channel(int(config.get("discord","channel"))).send("Chain completed for <@{0}> with payload: `{1}`".format(id, payload))
             else:
                 await client.get_user(int(id)).send("Chain completed with payload: `{0}`".format(payload))
+        while len(validations) > 0:
+            id, payload = validations.popleft()
+            if config.get("discord", "channel", fallback="") != "":
+                await client.get_channel(int(config.get("discord","channel"))).send("Validation chain completed for <@{0}> with payload: `{1}`".format(id, payload))
+            else:
+                await client.get_user(int(id)).send("Validation chain completed with payload: `{0}`".format(payload))
+            valid[id] = webhooks[id]
+        while len(chainCompletitions) > 0:
+            id, payload = chainCompletitions.popleft()
+            if config.get("discord", "channel", fallback="") != "":
+                await client.get_channel(int(config.get("discord","channel"))).send("Chain segment completed for <@{0}> with payload: `{1}`".format(id, payload))
+            else:
+                await client.get_user(int(id)).send("Chain segment completed with payload: `{0}`".format(payload))
+            chain.pop(0)
+            chainSeg += 1
+            if len(chain) == 0:
+                if config.get("discord", "channel", fallback="") != "":
+                    await client.get_channel(int(config.get("discord","channel"))).send("Chain completed in {0} segments with payload: `{1}`".format(chainSeg, payload))
+            else:
+                await fireWebhook(chain[0], payload, chainActivations)
         await asyncio.sleep(1)
 
-async def fireWebhook(id, token):
-    initiations[id] = time.monotonic()
+async def fireWebhook(id, token, struct):
+    struct[id] = time.monotonic()
     webhookURI = webhooks[id][0]
     b = {"id" : id, "payload" : token}
     async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
@@ -99,6 +121,20 @@ async def webhookHandler(request):
                 completions.append((json["id"],json["payload"]))
             else:
                 raise web.HTTPForbidden
+        elif json["id"] in validationrequests:
+            del validationrequests[json["id"]]
+            _, incoming = webhooks[json["id"]]
+            if incoming == identifier:
+                validations.append((json["id"],json["payload"]))
+            else:
+                raise web.HTTPForbidden
+        elif json["id"] in chainActivations:
+            del chainActivations[json["id"]]
+            _, incoming = webhooks[json["id"]]
+            if incoming == identifier:
+                chainCompletitions.append((json["id"],json["payload"]))
+            else:
+                raise web.HTTPForbidden
         else:
             if json["id"] in webhooks:
                 raise web.HTTPRequestTimeout
@@ -114,9 +150,15 @@ async def webhookHandler(request):
 # Data Structures
 webhooks = {}
 registrants = {}
+valid = {}
 initiations = {}
 completions = collections.deque()
-
+validationrequests = {} 
+validations = collections.deque()
+chainActivations = {}
+chain = []
+chainCompletitions = collections.deque()
+chainSeg = 0
 
 # Load config.ini
 config = configparser.ConfigParser()
@@ -197,6 +239,7 @@ async def on_ready():
 # Active Reactions
 @client.event
 async def on_message(message):
+    global chainSeg
     # Handle DMs
     if message.channel.type == discord.ChannelType.private:
         if message.author.id in registrants:
@@ -243,6 +286,9 @@ async def on_message(message):
     # Register a new webhook pair
     if message.content.lower() == "|register":
         if message.author.id in webhooks:
+            if message.author.id in valid:
+                del valid[id]
+                await message.channel.send("Chain invalidated.")
             await message.channel.send("Reregistering, details sent directly.")
         else:
             await message.channel.send("Registering, details sent directly.")
@@ -273,7 +319,20 @@ async def on_message(message):
         if message.author.id in webhooks:
             token = secrets.token_hex(8)
             await message.channel.send("Initiating chain with payload: `{0}`".format(token))
-            statusCode = await fireWebhook(message.author.id, token)
+            statusCode = await fireWebhook(message.author.id, token, initiations)
+            if statusCode == -1:
+                await message.author.send("An error occured and the request could not be sent.")
+            elif statusCode != 200:
+                await message.author.send("HTTP request failed with code: `{0}`".format(statusCode))
+        else:
+            await message.channel.send("Unregistered.")
+    
+    # Fire a validation chain
+    if message.content.lower() == "|validate":
+        if message.author.id in webhooks:
+            token = secrets.token_hex(8)
+            await message.channel.send("Validating chain with payload: `{0}`".format(token))
+            statusCode = await fireWebhook(message.author.id, token, validationrequests)
             if statusCode == -1:
                 await message.author.send("An error occured and the request could not be sent.")
             elif statusCode != 200:
@@ -281,6 +340,19 @@ async def on_message(message):
         else:
             await message.channel.send("Unregistered.")
 
+    # Loop through the validated chains
+    if message.content.lower() == "|chain":
+        if len(valid) > 0:
+            await message.channel.send("Preparing chain.")
+            chain.clear()
+            chainSeg = 0
+            chainActivations.clear()
+            for entry in valid:
+                chain.append(entry)
+            await message.channel.send("Beginning chain with payload: `{0}`".format(chainMessage))
+            await fireWebhook(message.author.id, chainMessage, chainActivations)
+        else:
+            await message.channel.send("No validated chains.")
 
     # Ping test
     if message.content.lower() == "|ping":

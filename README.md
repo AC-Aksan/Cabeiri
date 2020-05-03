@@ -33,6 +33,12 @@ A web socket to discord interface for Rube-Goldberg chains.
   
 - `|initiate`
   Used to fire the initial outgoing webhook and begin listening on the incoming webhook, mentions the initiator on completion, in channel if localized or DMs otherwise. 
+
+- `|validate`
+  Used to fire a confirmatory outgoing webhook and adds the chain to the valid list if successful, mentions the initiator on completion, in channel if localized or DMs otherwise. 
+
+- `|chain`
+  Used to connect all the validated chains into one giant chain.
   
 # Webhook Request Format
   The expected format of the final HTTP POST request matches the first in consisting of a JSON body with the following keys, `id` unique to the user and consistent between activations and `payload` unique to the activation. A message without the correct `id` for the URL that is being used will be rejected but the `payload` does not need to be correct to the activation. Overall the outgoing message serves as an example for the ingoing message.
