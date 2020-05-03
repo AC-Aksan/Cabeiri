@@ -287,7 +287,7 @@ async def on_message(message):
     if message.content.lower() == "|register":
         if message.author.id in webhooks:
             if message.author.id in valid:
-                del valid[id]
+                del valid[message.author.id]
                 await message.channel.send("Chain invalidated.")
             await message.channel.send("Reregistering, details sent directly.")
         else:
