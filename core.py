@@ -70,7 +70,7 @@ async def cleanUp():
         while len(completions) > 0:
             user_id, payload = completions.popleft()
             if localized:
-                await client.get_channel(int(config.get("discord","channel"))).send(f"Chain completed for <@{user_id}> with payload: `{payload}`")
+                await local_channel.send(f"Chain completed for <@{user_id}> with payload: `{payload}`")
             else:
                 await client.get_user(int(user_id)).send(f"Chain completed with payload: `{payload}`")
         while len(validations) > 0:
