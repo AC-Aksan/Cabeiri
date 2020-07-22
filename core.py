@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import configparser
+import argparse
 import discord
 import sys
 import os
@@ -171,40 +172,26 @@ else:
     writeBackConfig()
 
 # Configure from command line if needed
-if len(sys.argv) > 1:
-    token = False
-    owner = False
-    host = False
-    port = False
-    for arg in sys.argv[1:]:
-        if arg == "-T":
-            token = True
-        elif arg == "-O":
-            owner = True
-        elif arg == "-H":
-            host = True
-        elif arg == "-P":
-            port = True
-        elif token:
-            config["discord"]["token"] = arg
-            token = False
-            print("Token set")
-        elif owner:
-            config["discord"]["owner"] = arg
-            owner = False
-            print("Owner set")
-        elif host:
-            config["server"]["host"] = arg
-            host = False
-            print("Host set")
-        elif port:
-            config["server"]["port"] = arg
-            host = False
-            print("Port set")
-        else:
-            print ("Bad arguments, ending")
-            exit(1)
-        writeBackConfig()
+parser = argparse.ArgumentParser()
+parser.add_argument("-t", "--token", type=str, 
+                    help = "the discord bot token to be used")
+parser.add_argument("-o", "--owner", type=str, 
+                    help = "a discord user id to preconfigure the bot owner")
+parser.add_argument("-n", "--hostname", type=str, 
+                    help = "the hostname to present the server on")
+parser.add_argument("-p", "--port", type=int, 
+                    help = "the port to bind the webserver to")
+args = parser.parse_args()
+
+if args.token != None :
+    config["discord"]["token"] = args.token
+if args.owner != None :
+    config["discord"]["owner"] = args.owner
+if args.hostname != None :
+    config["server"]["host"] = args.hostname
+if args.port != None :
+    config["server"]["port"] = args.port
+writeBackConfig()
 
 
 # Load from pseudodatabase
