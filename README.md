@@ -2,16 +2,16 @@
 A web socket to discord interface for Rube-Goldberg chains.
 
 ## Config Arguments
-- `-T`
+- `-t`, `--token`
   Used to provide the discord bot token to be used.
   
-- `-O`
+- `-o`, `--owner`
   Used to provide the user ID of the owner, alternative to using the `|claim` command.
   
-- `-H`
+- `-n`, `--hostname`
   Used to specify the unqualified host name, defaults to `localhost`. 
   
-- `-P`
+- `-p`, `--port`
   Used to specify the port to operate on, defaults to `6280`.
 
 ## Config Commands
